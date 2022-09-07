@@ -26,7 +26,7 @@ find_package(OpenMP REQUIRED)
 include(cmake/GitUtils.cmake)
 git_clone(
 	PROJECT_NAME	math
-	GIT_URL		https://github.com/bayesmix-dev/math.git
+	GIT_URL		https://github.com/stan-dev/math.git
 	GIT_BRANCH      update/eigen-3.4
 	DIRECTORY	${CMAKE_CURRENT_LIST_DIR}/lib
 )
