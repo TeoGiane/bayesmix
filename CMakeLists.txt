@@ -98,10 +98,10 @@ set(BASEPATH "${CMAKE_CURRENT_LIST_DIR}")
 set(INCLUDE_PATHS
   ${BASEPATH}
   ${CMAKE_CURRENT_LIST_DIR}/lib/math
-  ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/boost_1.72.0
+  ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/boost_1.78.0
   ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/eigen_3.4.0
   ${TBB_ROOT}/include
-  ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/sundials_5.5.0/include
+  ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/sundials_6.1.1/include
   ${CMAKE_CURRENT_BINARY_DIR}
   ${protobuf_SOURCE_DIR}/src
 )
