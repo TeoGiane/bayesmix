@@ -35,7 +35,7 @@ git_clone(
 message(STATUS "Using math TBB")
 # Define TBB_ROOT Folder
 set(TBB_ROOT ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/tbb)
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/tbb_2019_U8/ DESTINATION ${TBB_ROOT})
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/lib/math/lib/tbb_2020_3/ DESTINATION ${TBB_ROOT})
 # Build TBB Library with CMake Integration
 include(${TBB_ROOT}/cmake/TBBBuild.cmake)
 list(APPEND MAKE_ARGS "tbb_build_dir=${TBB_ROOT}")
