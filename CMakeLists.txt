@@ -160,7 +160,7 @@ target_link_libraries(bayesmix PUBLIC ${LINK_LIBRARIES})
 target_compile_options(bayesmix PUBLIC ${COMPILE_OPTIONS})
 
 # Build static library
-add_library(bayesmixlib SHARED $<TARGET_OBJECTS:bayesmix>)
+add_library(bayesmixlib $<TARGET_OBJECTS:bayesmix>)
 
 if (BUILD_RUN)
   # Build run executable
