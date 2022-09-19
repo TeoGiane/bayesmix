@@ -175,6 +175,7 @@ class BaseAlgorithm {
     collector->collect(get_state_as_proto(iter));
   }
 
+ public:
   //! Performs a single step of algorithm
   virtual void step() {
     sample_allocations();
@@ -187,6 +188,7 @@ class BaseAlgorithm {
   //! Returns Protobuf object containing current state values and iter number
   bayesmix::AlgorithmState get_state_as_proto(const unsigned int iter);
 
+ protected:
   //! Advances `Collector` reading pointer by one, and returns 1 if successful
   bool update_state_from_collector(BaseCollector *const coll);
 
