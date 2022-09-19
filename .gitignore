@@ -32,3 +32,6 @@ src/hierarchies/updaters/.old/
 test/.old/
 examples/gamma_hierarchy/.old/
 .env
+
+# Ignore R/ folder
+R/
