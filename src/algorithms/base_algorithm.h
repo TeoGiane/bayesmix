@@ -148,11 +148,11 @@ class BaseAlgorithm {
     return unique_values;
   }
 
- protected:
   // ALGORITHM FUNCTIONS
   //! Initializes all members of the class before running the algorithm
   virtual void initialize();
 
+ protected:
   //! Prints a message at the beginning of `run()`
   virtual void print_startup_message() const = 0;
 
