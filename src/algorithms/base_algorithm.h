@@ -148,6 +148,8 @@ class BaseAlgorithm {
     return unique_values;
   }
 
+  std::vector<unsigned int> get_allocations() const { return allocations; }
+
   // ALGORITHM FUNCTIONS
   //! Initializes all members of the class before running the algorithm
   virtual void initialize();
