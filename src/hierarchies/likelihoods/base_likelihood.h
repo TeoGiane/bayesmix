@@ -122,8 +122,8 @@ class BaseLikelihood : public AbstractLikelihood {
   }
 
   //! Sets the (pointer to) the dataset in the cluster
-  void set_dataset(const Eigen::MatrixXd *const dataset) override {
-    dataset_ptr = dataset;
+  void set_dataset(const Eigen::MatrixXd &dataset) override {
+    *dataset_ptr = dataset;
   }
 
   //! Returns the (pointer to) the dataset in the cluster
@@ -179,7 +179,8 @@ class BaseLikelihood : public AbstractLikelihood {
   std::set<int> cluster_data_idx;
 
   //! Pointer to the cluster dataset
-  const Eigen::MatrixXd *dataset_ptr;
+  std::shared_ptr<Eigen::MatrixXd> dataset_ptr =
+      std::make_shared<Eigen::MatrixXd>();
 };
 
 template <class Derived, typename State>

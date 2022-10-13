@@ -261,7 +261,7 @@ class AbstractHierarchy {
   virtual bool is_conjugate() const = 0;
 
   //! Sets the (pointer to) the dataset in the cluster
-  virtual void set_dataset(const Eigen::MatrixXd *const dataset) = 0;
+  virtual void set_dataset(const Eigen::MatrixXd &dataset) = 0;
 
  protected:
   //! Evaluates the log-likelihood of data in a single point

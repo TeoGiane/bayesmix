@@ -339,7 +339,7 @@ class BaseHierarchy : public AbstractHierarchy {
   bool is_conjugate() const override { return updater->is_conjugate(); };
 
   //! Sets the (pointer to the) dataset matrix
-  void set_dataset(const Eigen::MatrixXd *const dataset) override {
+  void set_dataset(const Eigen::MatrixXd &dataset) override {
     like->set_dataset(dataset);
   }
 
