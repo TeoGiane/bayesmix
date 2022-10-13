@@ -127,7 +127,7 @@ class BaseLikelihood : public AbstractLikelihood {
   }
 
   //! Returns the (pointer to) the dataset in the cluster
-  const Eigen::MatrixXd *get_dataset() const { return dataset_ptr; }
+  const Eigen::MatrixXd *get_dataset() const { return dataset_ptr.get(); }
 
   //! Adds a datum and its index to the likelihood
   void add_datum(
