@@ -1,10 +1,19 @@
-function(compile_protobuf_files) #FOLDER_PATH PROTO_HEADERS PROTO_SOURCES)
+function(compile_protobuf_files)
     # Parse input arguments
     set(oneValueArgs FOLDER HEADERS SOURCES)
+    set(multiValueArgs INCLUDE_PROTO_PATHS)
     cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+    # Append all paths for protoc
+    list(APPEND PROTO_DIRS "--proto_path=${arg_FOLDER}")
+    if(NOT "${arg_INCLUDE_PROTO_PATHS}" STREQUAL "")
+        foreach(PBPATH IN LISTS arg_INCLUDE_PROTO_PATHS)
+            list(APPEND PROTO_DIRS "--proto_path=${PBPATH}")
+        endforeach()
+    endif()
+    # message("PROTO_DIRS: ${PROTO_DIRS}")
+
     # Make custom command to compile each ProtoFile in FOLDER_PATH
-    # message("FOLDER_PATH: ${arg_FOLDER}")
     file(GLOB ProtoFiles "${arg_FOLDER}/*.proto")
     set(PROTO_DIR proto)
     foreach(PROTO_FILE IN LISTS ProtoFiles)
@@ -17,9 +26,7 @@ function(compile_protobuf_files) #FOLDER_PATH PROTO_HEADERS PROTO_SOURCES)
     message(STATUS "protoc src: ${PROTO_SRC}")
     add_custom_command(
         OUTPUT ${PROTO_SRC} ${PROTO_HDR}
-        COMMAND protobuf::protoc
-        "--proto_path=${arg_FOLDER}"
-        "--proto_path=${Protobuf_INCLUDE_DIRS}"
+        COMMAND protobuf::protoc ${PROTO_DIRS}
         "--cpp_out=${PROJECT_BINARY_DIR}"
         "--python_out=${BASEPATH}/python/bayesmixpy/proto"
         ${PROTO_FILE}
