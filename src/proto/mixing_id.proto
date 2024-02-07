@@ -6,7 +6,7 @@ package bayesmix;
  * Enum for the different types of Mixing.
  */
 enum MixingId {
-    UNKNOWN_MIXING = 0;
+    CUSTOM_MIXING = 0;
     DP = 1; // Dirichlet Process
     PY = 2; // Pitman-Yor Process
     LogSB = 3; // Logit Stick-Breaking Process

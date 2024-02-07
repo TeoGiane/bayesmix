@@ -11,7 +11,7 @@ package bayesmix;
  * [4] M. Kalli, J. Griffin and S. G. Walker, Slice sampling mixture models. Stat and Comp. (2011)
  */
 enum AlgorithmId {
-    UNKNOWN_ALGORITHM = 0;
+    CUSTOM_ALGORITHM = 0;
     Neal2 = 1; // Neal's Algorithm 2, see [1]
     Neal3 = 2; // Neal's Algorithm 3, see [1]
     Neal8 = 3; // Neal's Algorithm 8, see [1]
