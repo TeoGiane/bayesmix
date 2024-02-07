@@ -1,6 +1,6 @@
 function(compile_protobuf_files)
     # Parse input arguments
-    set(oneValueArgs FOLDER HEADERS SOURCES)
+    set(oneValueArgs FOLDER HEADERS SOURCES PYTHON_OUT_PATH)
     set(multiValueArgs INCLUDE_PROTO_PATHS)
     cmake_parse_arguments(arg "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -12,6 +12,12 @@ function(compile_protobuf_files)
         endforeach()
     endif()
     # message("PROTO_DIRS: ${PROTO_DIRS}")
+
+    # Set --python-out option if PYTHON_OUT is set
+    if(NOT "${arg_PYTHON_OUT_PATH}" STREQUAL "")
+        set(PYTHON_OUT "--python_out=${arg_PYTHON_OUT_PATH}")
+    endif()
+
 
     # Make custom command to compile each ProtoFile in FOLDER_PATH
     file(GLOB ProtoFiles "${arg_FOLDER}/*.proto")
@@ -27,8 +33,7 @@ function(compile_protobuf_files)
     add_custom_command(
         OUTPUT ${PROTO_SRC} ${PROTO_HDR}
         COMMAND protobuf::protoc ${PROTO_DIRS}
-        "--cpp_out=${PROJECT_BINARY_DIR}"
-        "--python_out=${BASEPATH}/python/bayesmixpy/proto"
+        "--cpp_out=${PROJECT_BINARY_DIR}" ${PYTHON_OUT}
         ${PROTO_FILE}
         DEPENDS ${PROTO_FILE} protobuf::protoc
         COMMENT "Generate C++ protocol buffer for ${PROTO_FILE}"

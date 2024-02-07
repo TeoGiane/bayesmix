@@ -119,6 +119,7 @@ include(cmake/ProtobufUtils.cmake)
 compile_protobuf_files(
   FOLDER "${BASEPATH}/src/proto"
   INCLUDE_PROTO_PATHS "${Protobuf_INCLUDE_DIRS}"
+  PYTHON_OUT_PATH "${BASEPATH}/python/bayesmixpy/proto"
   HEADERS PROTO_HDRS
   SOURCES PROTO_SRCS
 )
