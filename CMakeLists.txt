@@ -114,13 +114,17 @@ set(LINK_LIBRARIES
 # Compiler options
 set(COMPILE_OPTIONS -D_REENTRANT -fPIC)
 
-# Compile proto files
+# Compile proto files in ${BASEPATH}/src/proto
 include(cmake/ProtobufUtils.cmake)
 compile_protobuf_files(
   FOLDER "${BASEPATH}/src/proto"
+  INCLUDE_PROTO_PATHS "${Protobuf_INCLUDE_DIRS}"
   HEADERS PROTO_HDRS
   SOURCES PROTO_SRCS
 )
+
+# set(BAYESMIX_PROTO_PATHS "${BASEPATH}/src/proto" "${Protobuf_INCLUDE_DIRS}")
+# message("HEY THERE! ${BAYESMIX_PROTO_PATHS}")
 
 # Export variables to parent scope if bayesmix is used as dependency library
 get_directory_property(HAS_PARENT PARENT_DIRECTORY)
@@ -129,7 +133,7 @@ if(HAS_PARENT)
   set(BAYESMIX_INCLUDE_PATHS ${INCLUDE_PATHS} PARENT_SCOPE)
   set(BAYESMIX_LINK_LIBRARIES ${LINK_LIBRARIES} PARENT_SCOPE)
   set(BAYESMIX_COMPILE_OPTIONS ${COMPILE_OPTIONS} PARENT_SCOPE)
-  set(BAYESMIX_PROTO_PATH "${BASEPATH}/src/proto" PARENT_SCOPE)
+  set(BAYESMIX_PROTO_PATHS "${BASEPATH}/src/proto" "${Protobuf_INCLUDE_DIRS}" PARENT_SCOPE)
   set(BAYESMIX_PROTO_HDRS ${PROTO_HDRS} PARENT_SCOPE)
   set(BAYESMIX_PROTO_SRCS ${PROTO_SRCS} PARENT_SCOPE)
   set(ProtoFiles ${ProtoFiles} PARENT_SCOPE)
