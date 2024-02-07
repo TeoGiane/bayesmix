@@ -17,23 +17,32 @@ Eigen::MatrixXd simulate_data(const unsigned int ndata) {
 }
 
 int main() {
-  auto hier = std::make_shared<GammaGammaHierarchy>(1.0, 2.0, 2.0);
+  // Simulate data
+  Eigen::MatrixXd data = simulate_data(50);
 
+  // Set up hierarchy
+  bayesmix::GammaGammaPrior hier_prior;
+  hier_prior.mutable_fixed_values()->set_shape(1.0);
+  hier_prior.mutable_fixed_values()->set_rate_alpha(2.0);
+  hier_prior.mutable_fixed_values()->set_rate_beta(2.0);
+  auto hier = std::make_shared<GammaGammaHierarchy>();
+  hier->get_mutable_prior()->CopyFrom(hier_prior);
+  hier->initialize();
+
+  // Set up mixing
   bayesmix::DPPrior mix_prior;
-  double totalmass = 1.0;
-  mix_prior.mutable_fixed_value()->set_totalmass(totalmass);
+  mix_prior.mutable_fixed_value()->set_totalmass(1.0);
   auto mixing = MixingFactory::Instance().create_object("DP");
   mixing->get_mutable_prior()->CopyFrom(mix_prior);
   mixing->set_num_components(5);
 
+  // Set up algorithm
   auto algo = AlgorithmFactory::Instance().create_object("Neal8");
-  MemoryCollector* coll = new MemoryCollector();
-
-  Eigen::MatrixXd data = simulate_data(50);
   algo->set_mixing(mixing);
   algo->set_data(data);
   algo->set_hierarchy(hier);
 
+  // Specify algorithm params
   bayesmix::AlgorithmParams params;
   params.set_algo_id("Neal8");
   params.set_rng_seed(0);
@@ -41,9 +50,14 @@ int main() {
   params.set_iterations(2000);
   params.set_init_num_clusters(10);
   params.set_neal8_n_aux(1);
-
   algo->read_params_from_proto(params);
+
+  // Set up collector
+  MemoryCollector* coll = new MemoryCollector();
+
+  // Run algorithm
   algo->run(coll);
 
   delete coll;
+  return 0;
 }

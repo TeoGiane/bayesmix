@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package bayesmix;
+
+message GammaState {
+    double shape = 1;
+    double rate = 2;
+}

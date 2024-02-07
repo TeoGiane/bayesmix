@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "algorithm_state.pb.h"
+#include "examples/gamma_state.pb.h"
+#include "gamma_utils.h"
 #include "src/hierarchies/likelihoods/base_likelihood.h"
 #include "src/hierarchies/likelihoods/states/base_state.h"
 
@@ -18,19 +20,26 @@ class Gamma : public BaseState {
   using ProtoState = bayesmix::AlgorithmState::ClusterState;
 
   ProtoState get_as_proto() const override {
+    // Fill ProtoState object
     ProtoState out;
-    out.mutable_general_state()->set_size(2);
-    out.mutable_general_state()->mutable_data()->Add(shape);
-    out.mutable_general_state()->mutable_data()->Add(rate);
+    bayesmix::GammaState state;
+    state.set_shape(shape);
+    state.set_rate(rate);
+    out.mutable_custom_state()->PackFrom(state);
     return out;
   }
 
   void set_from_proto(const ProtoState &state_, bool update_card) override {
+    // Set cardinality
     if (update_card) {
       card = state_.cardinality();
     }
-    shape = state_.general_state().data()[0];
-    rate = state_.general_state().data()[1];
+    // Unpack state
+    auto unpacked_state = bayesmix::unpack_protobuf_any<bayesmix::GammaState>(
+        state_.custom_state());
+    // Set shape and rate
+    shape = unpacked_state.shape();
+    rate = unpacked_state.rate();
   }
 };
 }  // namespace State
@@ -42,10 +51,6 @@ class GammaLikelihood : public BaseLikelihood<GammaLikelihood, State::Gamma> {
   bool is_multivariate() const override { return false; };
   bool is_dependent() const override { return false; };
   void clear_summary_statistics() override;
-
-  // Getters and Setters
-  int get_ndata() const { return ndata; };
-  double get_shape() const { return state.shape; };
   double get_data_sum() const { return data_sum; };
 
  protected:
@@ -54,15 +59,10 @@ class GammaLikelihood : public BaseLikelihood<GammaLikelihood, State::Gamma> {
 
   //! Sum of data in the cluster
   double data_sum = 0;
-  //! number of data in the cluster
-  int ndata = 0;
 };
 
 /* DEFINITIONS */
-void GammaLikelihood::clear_summary_statistics() {
-  data_sum = 0;
-  ndata = 0;
-}
+void GammaLikelihood::clear_summary_statistics() { data_sum = 0; }
 
 double GammaLikelihood::compute_lpdf(const Eigen::RowVectorXd &datum) const {
   return stan::math::gamma_lpdf(datum(0), state.shape, state.rate);
@@ -72,10 +72,8 @@ void GammaLikelihood::update_sum_stats(const Eigen::RowVectorXd &datum,
                                        bool add) {
   if (add) {
     data_sum += datum(0);
-    ndata += 1;
   } else {
     data_sum -= datum(0);
-    ndata -= 1;
   }
 }
 

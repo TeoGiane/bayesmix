@@ -7,99 +7,116 @@
 #include <vector>
 
 #include "algorithm_state.pb.h"
+#include "examples/gamma_gamma_prior.pb.h"
 #include "gamma_likelihood.h"
+#include "gamma_utils.h"
 #include "hierarchy_prior.pb.h"
 #include "src/hierarchies/priors/base_prior_model.h"
 #include "src/utils/rng.h"
 
 namespace Hyperparams {
-struct Gamma {
-  double rate_alpha, rate_beta;
+struct GammaGamma {
+  double shape, rate_alpha, rate_beta;
 };
 }  // namespace Hyperparams
 
-class GammaPriorModel
-    : public BasePriorModel<GammaPriorModel, State::Gamma, Hyperparams::Gamma,
-                            bayesmix::EmptyPrior> {
+class GammaPriorModel : public BasePriorModel<GammaPriorModel, State::Gamma,
+                                              Hyperparams::GammaGamma,
+                                              bayesmix::GammaGammaPrior> {
  public:
   using AbstractPriorModel::ProtoHypers;
   using AbstractPriorModel::ProtoHypersPtr;
-
-  GammaPriorModel(double shape_ = -1, double rate_alpha_ = -1,
-                  double rate_beta_ = -1);
+  GammaPriorModel() = default;
   ~GammaPriorModel() = default;
-
   double lpdf(const google::protobuf::Message &state_) override;
-
   State::Gamma sample(ProtoHypersPtr hier_hypers = nullptr) override;
-
   void update_hypers(const std::vector<bayesmix::AlgorithmState::ClusterState>
-                         &states) override {
-    return;
-  };
-
+                         &states) override;
   void set_hypers_from_proto(
       const google::protobuf::Message &hypers_) override;
-
   ProtoHypersPtr get_hypers_proto() const override;
-  double get_shape() const { return shape; };
 
  protected:
-  double shape, rate_alpha, rate_beta;
   void initialize_hypers() override;
 };
 
 /* DEFINITIONS */
-GammaPriorModel::GammaPriorModel(double shape_, double rate_alpha_,
-                                 double rate_beta_)
-    : shape(shape_), rate_alpha(rate_alpha_), rate_beta(rate_beta_) {
-  create_empty_prior();
-};
-
 double GammaPriorModel::lpdf(const google::protobuf::Message &state_) {
-  double rate = downcast_state(state_).general_state().data()[1];
-  return stan::math::gamma_lpdf(rate, hypers->rate_alpha, hypers->rate_beta);
+  // Downcast state
+  auto statecast = downcast_state(state_).custom_state();
+  // Unpack state
+  auto unpacked_statecast =
+      bayesmix::unpack_protobuf_any<bayesmix::GammaState>(statecast);
+  return stan::math::gamma_lpdf(unpacked_statecast.rate(), hypers->rate_alpha,
+                                hypers->rate_beta);
 }
 
 State::Gamma GammaPriorModel::sample(ProtoHypersPtr hier_hypers) {
+  // RNG
   auto &rng = bayesmix::Rng::Instance().get();
+  // Get proper params
+  auto params = (hier_hypers) ? hier_hypers->custom_state()
+                              : get_hypers_proto()->custom_state();
+  // Unpack params
+  auto unpacked_params =
+      bayesmix::unpack_protobuf_any<bayesmix::GammaGammaDistribution>(params);
+  // Compute output
   State::Gamma out;
-
-  auto params = (hier_hypers) ? hier_hypers->general_state()
-                              : get_hypers_proto()->general_state();
-  double rate_alpha = params.data()[0];
-  double rate_beta = params.data()[1];
-  out.shape = shape;
-  out.rate = stan::math::gamma_rng(rate_alpha, rate_beta, rng);
+  out.shape = unpacked_params.shape();
+  out.rate = stan::math::gamma_rng(unpacked_params.rate_alpha(),
+                                   unpacked_params.rate_beta(), rng);
   return out;
+}
+
+void GammaPriorModel::update_hypers(
+    const std::vector<bayesmix::AlgorithmState::ClusterState> &states) {
+  if (prior->has_fixed_values()) {
+    return;
+  } else {
+    throw std::invalid_argument("Unrecognized hierarchy prior");
+  }
 }
 
 void GammaPriorModel::set_hypers_from_proto(
     const google::protobuf::Message &hypers_) {
-  auto &hyperscast = downcast_hypers(hypers_).general_state();
-  hypers->rate_alpha = hyperscast.data()[0];
-  hypers->rate_beta = hyperscast.data()[1];
+  // Downcast hypers
+  auto &hyperscast = downcast_hypers(hypers_).custom_state();
+  // Unpack hypers
+  auto unpacked_hyperscast =
+      bayesmix::unpack_protobuf_any<bayesmix::GammaGammaDistribution>(
+          hyperscast);
+  // Set hypers
+  hypers->shape = unpacked_hyperscast.shape();
+  hypers->rate_alpha = unpacked_hyperscast.rate_alpha();
+  hypers->rate_beta = unpacked_hyperscast.rate_beta();
 };
 
 GammaPriorModel::ProtoHypersPtr GammaPriorModel::get_hypers_proto() const {
   ProtoHypersPtr out = std::make_shared<ProtoHypers>();
-  out->mutable_general_state()->mutable_data()->Add(hypers->rate_alpha);
-  out->mutable_general_state()->mutable_data()->Add(hypers->rate_beta);
+  bayesmix::GammaGammaDistribution unpacked_hypers;
+  unpacked_hypers.set_shape(hypers->shape);
+  unpacked_hypers.set_rate_alpha(hypers->rate_alpha);
+  unpacked_hypers.set_rate_beta(hypers->rate_beta);
+  out->mutable_custom_state()->PackFrom(unpacked_hypers);
   return out;
 };
 
 void GammaPriorModel::initialize_hypers() {
-  hypers->rate_alpha = rate_alpha;
-  hypers->rate_beta = rate_beta;
-
+  if (prior->has_fixed_values()) {
+    hypers->shape = prior->fixed_values().shape();
+    hypers->rate_alpha = prior->fixed_values().rate_alpha();
+    hypers->rate_beta = prior->fixed_values().rate_beta();
+  } else {
+    throw std::runtime_error("Unrecognized hierarchy prior.");
+  }
   // Checks
-  if (shape <= 0) {
+  if (hypers->shape <= 0) {
     throw std::runtime_error("shape must be positive");
   }
-  if (rate_alpha <= 0) {
+  if (hypers->rate_alpha <= 0) {
     throw std::runtime_error("rate_alpha must be positive");
   }
-  if (rate_beta <= 0) {
+  if (hypers->rate_beta <= 0) {
     throw std::runtime_error("rate_beta must be positive");
   }
 }

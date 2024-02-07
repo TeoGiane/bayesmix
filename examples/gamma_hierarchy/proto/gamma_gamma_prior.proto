@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+// import "distribution.proto";
+
+package bayesmix;
+
+message GammaGammaDistribution {
+  double shape = 1;
+  double rate_alpha = 2;
+  double rate_beta = 3;
+}
+
+message GammaGammaPrior {
+  oneof prior {
+    GammaGammaDistribution fixed_values = 1;
+  }
+}
