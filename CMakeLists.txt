@@ -106,7 +106,7 @@ set(INCLUDE_PATHS
 # Link paths
 set(LINK_LIBRARIES
   pthread
-  protobuf::libprotobuf
+  ${Protobuf_LIBRARIES}
   tbb
   OpenMP::OpenMP_CXX
 )

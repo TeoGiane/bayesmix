@@ -32,7 +32,7 @@ function(compile_protobuf_files)
     message(STATUS "protoc src: ${PROTO_SRC}")
     add_custom_command(
         OUTPUT ${PROTO_SRC} ${PROTO_HDR}
-        COMMAND protobuf::protoc ${PROTO_DIRS}
+        COMMAND ${Protobuf_PROTOC_EXECUTABLE} ${PROTO_DIRS}
         "--cpp_out=${PROJECT_BINARY_DIR}" ${PYTHON_OUT}
         ${PROTO_FILE}
         DEPENDS ${PROTO_FILE} protobuf::protoc
