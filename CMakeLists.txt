@@ -138,6 +138,7 @@ if(HAS_PARENT)
   set(BAYESMIX_PROTO_HDRS ${PROTO_HDRS} PARENT_SCOPE)
   set(BAYESMIX_PROTO_SRCS ${PROTO_SRCS} PARENT_SCOPE)
   set(ProtoFiles ${ProtoFiles} PARENT_SCOPE)
+  set(Protobuf_PROTOC_EXECUTABLE ${Protobuf_PROTOC_EXECUTABLE} PARENT_SCOPE)
 endif()
 
 # Build library object
