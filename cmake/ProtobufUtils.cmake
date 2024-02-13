@@ -35,7 +35,7 @@ function(compile_protobuf_files)
         COMMAND ${Protobuf_PROTOC_EXECUTABLE} ${PROTO_DIRS}
         "--cpp_out=${PROJECT_BINARY_DIR}" ${PYTHON_OUT}
         ${PROTO_FILE}
-        DEPENDS ${PROTO_FILE} protobuf::protoc
+        DEPENDS ${PROTO_FILE} ${Protobuf_PROTOC_EXECUTABLE}
         COMMENT "Generate C++ protocol buffer for ${PROTO_FILE}"
         VERBATIM)
     list(APPEND PROTO_HEADERS ${PROTO_HDR})
