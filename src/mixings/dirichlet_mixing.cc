@@ -94,7 +94,7 @@ void DirichletMixing::initialize_state() {
   auto priorcast = cast_prior();
   if (priorcast->has_fixed_value()) {
     state.totalmass = priorcast->fixed_value().totalmass();
-    state.logtotmass = std::log(state.logtotmass);
+    state.logtotmass = std::log(state.totalmass);
     if (state.totalmass <= 0) {
       throw std::invalid_argument("Total mass parameter must be > 0");
     }
