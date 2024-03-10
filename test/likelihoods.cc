@@ -5,7 +5,7 @@
 #include <stan/math/rev.hpp>
 
 #include "algorithm_state.pb.h"
-#include "ls_state.pb.h"
+#include "cluster_state.pb.h"
 #include "src/hierarchies/likelihoods/laplace_likelihood.h"
 #include "src/hierarchies/likelihoods/multi_norm_likelihood.h"
 #include "src/hierarchies/likelihoods/uni_lin_reg_likelihood.h"

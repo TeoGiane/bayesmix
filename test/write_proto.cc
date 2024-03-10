@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "algorithm_state.pb.h"
-#include "ls_state.pb.h"
+#include "cluster_state.pb.h"
 #include "src/hierarchies/nnig_hierarchy.h"
 #include "src/utils/proto_utils.h"
 
