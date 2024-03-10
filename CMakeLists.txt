@@ -95,7 +95,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(INCLUDE_PATHS
   ${BASEPATH}
   ${math_SOURCE_DIR}
-  ${math_SOURCE_DIR}/lib/boost_1.78.0
+  ${math_SOURCE_DIR}/lib/boost_1.84.0
   ${math_SOURCE_DIR}/lib/eigen_3.4.0
   ${math_SOURCE_DIR}/lib/sundials_6.1.1/include
   ${math_SOURCE_DIR}/lib/tbb_2020.3/include
@@ -123,9 +123,6 @@ compile_protobuf_files(
   HEADERS PROTO_HDRS
   SOURCES PROTO_SRCS
 )
-
-# set(BAYESMIX_PROTO_PATHS "${BASEPATH}/src/proto" "${Protobuf_INCLUDE_DIRS}")
-# message("HEY THERE! ${BAYESMIX_PROTO_PATHS}")
 
 # Export variables to parent scope if bayesmix is used as dependency library
 get_directory_property(HAS_PARENT PARENT_DIRECTORY)

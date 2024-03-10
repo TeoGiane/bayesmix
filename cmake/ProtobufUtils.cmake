@@ -1,3 +1,6 @@
+# CMake function that add compilation instructions for every .proto files in
+# a given FOLDER, passed as input.
+
 function(compile_protobuf_files)
     # Parse input arguments
     set(oneValueArgs FOLDER HEADERS SOURCES PYTHON_OUT_PATH)
@@ -11,13 +14,11 @@ function(compile_protobuf_files)
             list(APPEND PROTO_DIRS "--proto_path=${PBPATH}")
         endforeach()
     endif()
-    # message("PROTO_DIRS: ${PROTO_DIRS}")
 
     # Set --python-out option if PYTHON_OUT is set
     if(NOT "${arg_PYTHON_OUT_PATH}" STREQUAL "")
         set(PYTHON_OUT "--python_out=${arg_PYTHON_OUT_PATH}")
     endif()
-
 
     # Make custom command to compile each ProtoFile in FOLDER_PATH
     file(GLOB ProtoFiles "${arg_FOLDER}/*.proto")
@@ -45,11 +46,5 @@ function(compile_protobuf_files)
 
     # Propagate PROTO_HDRS and PROTO_SRCS to parent scope
     set(${arg_HEADERS} ${PROTO_HEADERS} PARENT_SCOPE)
-    # unset(PROTO_HEADERS)
-    # message("PROTO_HDRS: ${PROTO_HDRS}")
-    # message("arg_HEADERS: ${arg_HEADERS}")
     set(${arg_SOURCES} ${PROTO_SOURCES} PARENT_SCOPE)
-    # unset(PROTO_HEADERS)
-    # message("PROTO_SRCS: ${PROTO_SRCS}")
-    # message("arg_SOURCES: ${arg_SOURCES}")
 endfunction()
