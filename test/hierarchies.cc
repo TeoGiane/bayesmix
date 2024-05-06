@@ -71,6 +71,34 @@ TEST(nnig_hierarchy, sample_given_data) {
   ASSERT_TRUE(clusval->DebugString() != clusval2->DebugString());
 }
 
+TEST(nnig_hierarchy, get_hypers) {
+  auto hier = std::make_shared<NNIGHierarchy>();
+  bayesmix::NNIGPrior prior;
+  double mu0 = 0.0;
+  double lambda0 = 0.1;
+  double alpha0 = 2.0;
+  double beta0 = 2.0;
+  prior.mutable_fixed_values()->set_mean(mu0);
+  prior.mutable_fixed_values()->set_var_scaling(lambda0);
+  prior.mutable_fixed_values()->set_shape(alpha0);
+  prior.mutable_fixed_values()->set_scale(beta0);
+  hier->get_mutable_prior()->CopyFrom(prior);
+  hier->initialize();
+
+  Eigen::VectorXd datum(1);
+  datum << 4.5;
+  hier->add_datum(0, datum, false);
+
+  auto prior_hypers = hier->get_prior_hypers();
+  prior_hypers->PrintDebugString();
+  std::cout << std::endl;
+  auto post_hypers = hier->get_posterior_hypers();
+  post_hypers->PrintDebugString();
+  std::cout << std::endl;
+
+  ASSERT_TRUE(prior_hypers->DebugString() != post_hypers->DebugString());
+}
+
 TEST(nnw_hierarchy, draw) {
   auto hier = std::make_shared<NNWHierarchy>();
   bayesmix::NNWPrior prior;
