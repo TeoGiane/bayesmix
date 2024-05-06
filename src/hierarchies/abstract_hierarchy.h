@@ -201,6 +201,25 @@ class AbstractHierarchy {
   //! Returns a pointer to the Protobuf message of the prior of this cluster
   virtual google::protobuf::Message *get_mutable_prior() = 0;
 
+  //! Returns a pointer to the Protobuf message of the prior hyperparameters of
+  //! this cluster
+  virtual std::shared_ptr<bayesmix::AlgorithmState::HierarchyHypers>
+  get_prior_hypers() = 0;
+
+  //! Returns a pointer to the Protobuf message of the current posterior
+  //! hyperparameters of this cluster
+  virtual std::shared_ptr<bayesmix::AlgorithmState::HierarchyHypers>
+  get_posterior_hypers() {
+    if (is_conjugate()) {
+      throw std::runtime_error(
+          "get_posterior_hypers() not implemented for this hierarchy");
+    } else {
+      throw std::runtime_error(
+          "Cannot call get_posterior_hypers() from a non-conjugate "
+          "hierarchy");
+    }
+  };
+
   //! Writes current state to a Protobuf message and return a shared_ptr
   //! New hierarchies have to first modify the field 'oneof val' in the
   //! AlgoritmState::ClusterState message by adding the appropriate type

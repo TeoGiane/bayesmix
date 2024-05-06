@@ -255,6 +255,20 @@ class BaseHierarchy : public AbstractHierarchy {
   //! Returns the indexes of data points belonging to this cluster
   std::set<int> get_data_idx() const override { return like->get_data_idx(); };
 
+  //! Returns a pointer to the Protobuf message of the prior hyperparameters of
+  //! this cluster
+  std::shared_ptr<bayesmix::AlgorithmState::HierarchyHypers>
+  get_prior_hypers() {
+    return prior->get_hypers_proto();
+  };
+
+  //! Returns a pointer to the Protobuf message of the current posterior
+  //! hyperparameters of this cluster
+  std::shared_ptr<bayesmix::AlgorithmState::HierarchyHypers>
+  get_posterior_hypers() {
+    return updater->compute_posterior_hypers(*like, *prior);
+  };
+
   //! Writes current state to a Protobuf message and return a shared_ptr
   //! New hierarchies have to first modify the field 'oneof val' in the
   //! AlgoritmState::ClusterState message by adding the appropriate type
