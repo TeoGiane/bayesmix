@@ -148,11 +148,11 @@ class BaseAlgorithm {
     return unique_values;
   }
 
- protected:
   // ALGORITHM FUNCTIONS
   //! Initializes all members of the class before running the algorithm
   virtual void initialize();
 
+ protected:
   //! Prints a message at the beginning of `run()`
   virtual void print_startup_message() const = 0;
 
@@ -175,6 +175,7 @@ class BaseAlgorithm {
     collector->collect(get_state_as_proto(iter));
   }
 
+ public:
   //! Performs a single step of algorithm
   virtual void step() {
     sample_allocations();
@@ -183,10 +184,13 @@ class BaseAlgorithm {
     mixing->update_state(unique_values, allocations);
   }
 
+  std::vector<unsigned int> get_allocations(void) { return allocations; };
+
   // AUXILIARY TOOLS
   //! Returns Protobuf object containing current state values and iter number
   bayesmix::AlgorithmState get_state_as_proto(const unsigned int iter);
 
+ protected:
   //! Advances `Collector` reading pointer by one, and returns 1 if successful
   bool update_state_from_collector(BaseCollector *const coll);
 

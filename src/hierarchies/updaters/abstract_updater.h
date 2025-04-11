@@ -47,7 +47,7 @@ class AbstractUpdater {
 
   //! Stores the posterior hyperparameters in an appropriate container
   void save_posterior_hypers(ProtoHypersPtr post_hypers_) {
-    saved_posterior_hypers = true;
+    // saved_posterior_hypers = true;
     posterior_hypers = post_hypers_;
   }
 
